@@ -15,22 +15,39 @@ fi
 # Run grep to see if eDP-1-1 is connected.
 # If a particular display device is connected
 # then there will be a number after "display_id connected"
+echo -e "\t\t\tSTATUS\n\t\t\t______"
 if echo $XRANDR_OUTPUT | grep -o -q "eDP-1-1 connected[[:space:]][[:digit:]]";then
-    echo "eDP-1-1 (Laptop Monitor) is switched on."
+    echo -e "\teDP-1-1 (Laptop Monitor) is switched on."
     EDP_ON=true
 else
-    echo "eDP-1-1 (Laptop Monitor) is switched off."
+    echo -e "\teDP-1-1 (Laptop Monitor) is switched off."
 fi
 
 #Do the same for HDMI monitor
 if echo $XRANDR_OUTPUT | grep -o -q "HDMI-1-1 connected[[:space:]][[:digit:]]";then
-    echo "HDMI-1-1 (Laptop Monitor) is switched on."
+    echo -e "\tHDMI-1-1 (Laptop Monitor) is switched on."
     HDMI_ON=true
 else
-    echo "HDMI-1-1 (Laptop Monitor) is switched off."
+    echo -e "\tHDMI-1-1 (Laptop Monitor) is switched off."
 fi
 
-#Our order of monitor alignemnts is:
+# if -f flag is passed, activate HDMI-1-1 only mode; provided both monitors are available.
+while getopts ":f" opt; do
+  case $opt in
+  f)
+    echo "-f passed; HDMI only mode on."
+    $(xrandr --output eDP-1-1 --off)
+    $(xrandr --output HDMI-1-1 --auto)
+    exit 0
+    ;;
+  *)
+    echo "ERROR: No such flag."
+    exit 1
+    ;; 
+  esac
+done
+
+# Our order of monitor alignments is:
 # EDP_ONLY -> HDMI_ONLY -> EDEP left & HDMI right
 if [ "$HDMI_ON" = true ] && [ "$EDP_ON" = true ];then
     echo "Both monitors are on."
