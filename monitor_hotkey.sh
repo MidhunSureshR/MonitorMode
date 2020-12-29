@@ -58,7 +58,7 @@ if [ "$HDMI_ON" = true ] && [ "$EDP_ON" = true ];then
 elif [ "$HDMI_ON" = true ];then
     echo "HDMI is only on."
     echo "Switching to dual monitor mode"
-    $(xrandr --output eDP-1-1 --auto --left-of HDMI-1-1)
+    $(xrandr --output eDP-1-1 --auto --right-of HDMI-1-1)
     $(notify-send -t 1500 "Dual Monitor Mode Enabled")
 
 elif [ "$EDP_ON" = true ];then
